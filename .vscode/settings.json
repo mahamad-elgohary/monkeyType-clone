@@ -1,0 +1,9 @@
+{
+  "editor.inlineCompletions.enabled": true,
+  "[javascript]": {
+    "editor.inlineCompletions.enabled": true
+  },
+  "github.copilot.enable": {
+    "javascript": true
+  }
+}

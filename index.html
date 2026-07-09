@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <header>
+        <h1>Typing Speed Test</h1>
+
+        <div class="settings">
+
+            <button class="time-btn active" data-time="30">
+                30s
+            </button>
+
+            <button class="time-btn" data-time="60">
+                60s
+            </button>
+
+            <button class="time-btn" data-time="120">
+                120s
+            </button>
+
+        </div>
+    </header>
+
+    <section class="stats">
+
+        <div class="card">
+            <span class="label">Time</span>
+            <span id="time">60</span>
+        </div>
+
+        <div class="card">
+            <span class="label">WPM</span>
+            <span id="wpm">0</span>
+        </div>
+
+        <div class="card">
+            <span class="label">CPM</span>
+            <span id="cpm">0</span>
+        </div>
+
+        <div class="card">
+            <span class="label">Accuracy</span>
+            <span id="accuracy">100%</span>
+        </div>
+
+        <div class="card">
+            <span class="label">Errors</span>
+            <span id="errors">0</span>
+        </div>
+
+    </section>
+
+    <section class="progress-wrapper">
+        <div id="progressBar"></div>
+    </section>
+
+    <section class="text-container">
+
+        <p id="paragraph">
+            Loading text...
+        </p>
+
+    </section>
+
+    <section class="typing-section">
+
+        <textarea
+            id="typingInput"
+            placeholder="Start typing here..."
+            spellcheck="false"
+        ></textarea>
+
+    </section>
+
+    <section class="controls">
+
+        <button id="restartBtn">
+            Restart Test
+        </button>
+
+        <button id="newTextBtn">
+            New Text
+        </button>
+
+    </section>
+
+    <section class="results">
+
+        <div class="result-box">
+            <h3>Best WPM</h3>
+            <p id="bestWpm">0</p>
+        </div>
+
+        <div class="result-box">
+            <h3>Tests Completed</h3>
+            <p id="testsCompleted">0</p>
+        </div>
+
+    </section>
+
+</div>
+
+
+<script type="module" src="./script.js"></script>
+</body>
+</html>
