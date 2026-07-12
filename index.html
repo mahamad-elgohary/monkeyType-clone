@@ -11,49 +11,39 @@
 <div class="container">
 
     <header>
-        <h1>Typing Speed Test</h1>
+        <h1>typing test</h1>
 
         <div class="settings">
-
-            <button class="time-btn active" data-time="30">
-                30s
-            </button>
-
-            <button class="time-btn" data-time="60">
-                60s
-            </button>
-
-            <button class="time-btn" data-time="120">
-                120s
-            </button>
-
+            <button class="time-btn " data-time="30">30</button>
+            <button class="time-btn" data-time="60">60</button>
+            <button class="time-btn" data-time="120">120</button>
         </div>
     </header>
 
     <section class="stats">
 
         <div class="card">
-            <span class="label">Time</span>
-            <span id="time">5</span>
+            <span class="label">time</span>
+            <span id="time"></span>
         </div>
 
         <div class="card">
-            <span class="label">WPM</span>
+            <span class="label">wpm</span>
             <span id="wpm">0</span>
         </div>
 
         <div class="card">
-            <span class="label">CPM</span>
+            <span class="label">cpm</span>
             <span id="cpm">0</span>
         </div>
 
         <div class="card">
-            <span class="label">Accuracy</span>
+            <span class="label">accuracy</span>
             <span id="accuracy">100%</span>
         </div>
 
         <div class="card">
-            <span class="label">Errors</span>
+            <span class="label">errors</span>
             <span id="errors">0</span>
         </div>
 
@@ -63,53 +53,43 @@
         <div id="progressBar"></div>
     </section>
 
-    <section class="text-container">
+   <section class="typing-wrapper">
 
-        <p id="paragraph">
-            Loading text...
-        </p>
+    <div class="text-container">
+        <p id="paragraph">Loading text...</p>
+    </div>
 
-    </section>
+    <textarea
+        id="typingInput"
+        spellcheck="false"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"></textarea>
 
-    <section class="typing-section">
-
-        <textarea
-            id="typingInput"
-            placeholder="Start typing here..."
-            spellcheck="false"
-        ></textarea>
-
-    </section>
+</section>
 
     <section class="controls">
-
-        <button id="restartBtn">
-            Restart Test
-        </button>
-
-        <button id="newTextBtn">
-            New Text
-        </button>
-
+        <button id="restartBtn">restart</button>
+        <button id="newTextBtn">new text</button>
     </section>
 
     <section class="results">
 
         <div class="result-box">
-            <h3>Best WPM</h3>
-            <p id="bestWpm">0</p>
+            <h3>best wpm</h3>
+            <p id="bestWpm"></p>
         </div>
 
         <div class="result-box">
-            <h3>Tests Completed</h3>
-            <p id="testsCompleted">0</p>
+            <h3>tests completed</h3>
+            <p id="testsCompleted"></p>
         </div>
 
     </section>
 
 </div>
 
-
 <script type="module" src="./script.js"></script>
+
 </body>
 </html>
