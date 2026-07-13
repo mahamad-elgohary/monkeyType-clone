@@ -11,6 +11,7 @@
     --sub:#646669;
     --yellow:#e2b714;
     --hover:#3a3d40;
+    --green:rgb(116, 235, 116);
 }
 
 body{
@@ -155,8 +156,8 @@ h1{
 
     color:transparent;
 
-    caret-color:var(--yellow);
-
+    /* caret-color:var(--yellow); */
+    caret-color: transparent;
     font-size:2rem;
     line-height:1.8;
 
@@ -219,7 +220,7 @@ h1{
 
 
 .correct{
-    color:var(--text);
+    color:var(--green);
 }
 
 .wrong{
