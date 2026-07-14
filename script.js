@@ -117,6 +117,7 @@ function renderText()
     targetTextArea.innerHTML += `<span data-typed=""> </span>`;
 }
 function saveStats(){
+    
     statsObj = { BestWpmCard:Number(BestWpmCard.textContent), testCompletedCard:Number(testCompletedCard.textContent)
         ,activeTime:activeBtn.dataset.time
     };
@@ -582,7 +583,7 @@ else if(statsObj.activeTime == 120)
         activeBtn = btn120;
         statsFactor = .5;
 }
-        wordsNumber = activeBtn.dataset.time == 30 ? 80 : activeBtn.dataset.time == 60 ? 160 : 280;
+        wordsNumber = activeBtn? activeBtn.dataset.time == 30 ? 80 : activeBtn.dataset.time == 60 ? 160 : 280: statsObj.activeTime == 30 ? 80 : statsObj.activeTime == 60 ? 160 : 280;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -606,5 +607,6 @@ function executeReloadAction() {
     targetTextArea.querySelectorAll('span')[currChar].classList.remove('current');
     starting = false;
     }
+    setActiveBtn();
     saveStats();
 }
