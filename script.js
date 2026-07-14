@@ -7,7 +7,6 @@ const wpmCard = document.querySelector('#wpm')
 const cpmCard = document.querySelector('#cpm');
 const accuracyCard = document.querySelector('#accuracy');
 const errorsCard = document.querySelector('#errors');
-const progressBar = document.querySelector('#progressBar');
 const restartBtn = document.querySelector('#restartBtn');
 const newTextBtn = document.querySelector('#newTextBtn');
 const BestWpmCard = document.querySelector('#bestWpm');
@@ -15,7 +14,7 @@ const testCompletedCard = document.querySelector('#testsCompleted');
 let btn30 = settingsCont.querySelector('[data-time="30"]');
 let btn60 = settingsCont.querySelector('[data-time="60"]');
 let btn120 = settingsCont.querySelector('[data-time="120"]');
-let wordsNumber = 5;
+let wordsNumber; 
 let activeBtn;
 let statsFactor;
 let statsObj = JSON.parse(localStorage.getItem('data')) || { BestWpmCard:0, testCompletedCard:0
@@ -26,6 +25,7 @@ testCompletedCard.textContent = statsObj.testCompletedCard || 0;
 setActiveBtn();
 //regarded keys only
 const englishRegex = /^[A-Za-z0-9\s.,!?'"()_+\-=\[\]{};:@#\$%^&\*`~<>\\\/|]$/
+const punctuation = [".", ",", "!", "?", ";", ":", "&", "(", ")", "[", "]", "{", "}", "+", "=", "|"];
 //random text gen
 let targetText = generate({exactly: wordsNumber, join: ' '}).trim();
 let targetTextWords = targetText.trim().split(' ');
@@ -33,9 +33,9 @@ let checkedWordsArr = new Array(targetTextWords.length).fill(false);
 //words and chars vars
 let currChar = 0;
 let currWord = 0;
+let cpmTemp = 0;
+let wpmTemp = 0;
 let lastWordright = false;
-let isOvertyping = false;
-let overtypedChars = 0;
 let thisWordWritten = [];
 let typedWords = [];
 //timevars
@@ -45,7 +45,6 @@ let timeout;
 //errorsvars
 let finished = false;
 let starting = false;
-let extraOvertypedChars = 0;
 let currentWordNoErrors = true;
 let errorsStack = [];//{currChar}
 let currCharInCurrWord = 0;
@@ -54,7 +53,20 @@ let chckedWordsArr = new Array(targetTextWords.length).fill(false);
 const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
 const modifierKeys = ['Control', 'Shift', 'Alt', 'Enter', 'CapsLock', 'Tab', 'Escape'];
 
-targetTextArea.innerHTML = targetText.split('').map(char => `<span data-typed="">${char}</span>`).join('');
+targetTextArea.innerHTML = targetText.split(' ').map((word,idx) => {
+    if (Math.random() < 0.4) {
+        let rnd = Math.floor(Math.random() * punctuation.length);
+        targetTextWords[idx] = word + punctuation[rnd];
+        return word + punctuation[rnd];
+    }
+    else if (Math.random() < 0.4) {
+        let rnd = Math.floor(Math.random() * punctuation.length);
+        targetTextWords[idx] = punctuation[rnd] + word ;
+        return punctuation[rnd] + word;
+    }
+    return word;
+}).join(' ').split('').map(char => `<span data-typed="">${char}</span>`).join('');
+targetTextArea.innerHTML += `<span data-typed=""> </span>`;
 targetTextArea.querySelectorAll('span')[currChar].classList.add('current');
 //event listners
 let startingEvent = typingArea.addEventListener('keydown', startTypingAction);
@@ -72,11 +84,37 @@ function renderNewText()
 {
     targetText = generate({exactly: wordsNumber, join: ' '}).trim();
     targetTextWords = targetText.trim().split(' ');
-    targetTextArea.innerHTML = targetText.split('').map(char => `<span data-typed="">${char}</span>`).join('');
+    targetTextArea.innerHTML = targetText.split(' ').map((word,idx) => {
+    if (Math.random() < 0.4) {
+        let rnd = Math.floor(Math.random() * punctuation.length);
+        targetTextWords[idx] = word + punctuation[rnd];
+        return word + punctuation[rnd];
+    }
+    else if (Math.random() < 0.4) {
+        let rnd = Math.floor(Math.random() * punctuation.length);
+        targetTextWords[idx] = punctuation[rnd] + word ;
+        return punctuation[rnd] + word;
+    }
+    return word;
+}).join(' ').split('').map(char => `<span data-typed="">${char}</span>`).join('');
+    targetTextArea.innerHTML += `<span data-typed=""> </span>`;
 }
 function renderText()
 {
-    targetTextArea.innerHTML = targetText.trim().split('').map(char => `<span data-typed="">${char}</span>`).join('');
+    targetTextArea.innerHTML = targetText.split(' ').map((word,idx) => {
+    if (Math.random() < 0.4) {
+        let rnd = Math.floor(Math.random() * punctuation.length);
+        targetTextWords[idx] = word + punctuation[rnd];
+        return word + punctuation[rnd];
+    }
+    else if (Math.random() < 0.4) {
+        let rnd = Math.floor(Math.random() * punctuation.length);
+        targetTextWords[idx] = punctuation[rnd] + word ;
+        return punctuation[rnd] + word;
+    }
+    return word;
+}).join(' ').split('').map(char => `<span data-typed="">${char}</span>`).join('');
+    targetTextArea.innerHTML += `<span data-typed=""> </span>`;
 }
 function saveStats(){
     statsObj = { BestWpmCard:Number(BestWpmCard.textContent), testCompletedCard:Number(testCompletedCard.textContent)
@@ -103,6 +141,7 @@ function settingsUpdateAction(e){
             btn120.classList.remove('active');
         btn30.classList.add('active');
         activeBtn = btn30;
+        statsFactor = 2;
     }
     else if(e.target.dataset.time  == '60')
     {
@@ -114,6 +153,7 @@ function settingsUpdateAction(e){
             btn120.classList.remove('active');
         btn60.classList.add('active');  
         activeBtn = btn60;
+        statsFactor = 1;
     }
     else if(e.target.dataset.time  == '120')
     {
@@ -125,7 +165,9 @@ function settingsUpdateAction(e){
             btn60.classList.remove('active');
         btn120.classList.add('active');
         activeBtn = btn120;
+        statsFactor = .5;
     }
+    wordsNumber = activeBtn.dataset.time == 30 ? 80 : activeBtn.dataset.time == 60 ? 160 : 280;
     restartTypingTest();
 }
 function restartTypingTest()
@@ -137,18 +179,21 @@ function restartTypingTest()
     wpmCard.textContent = 0;
     cpmCard.textContent = 0;
     errorsCard.textContent = 0;
+     accuracyCard.textContent = "100%";
+    cpmTemp = 0;
+    wpmTemp = 0;
     currChar = 0;
     currWord = 0;
     finished = false;
     currCharInCurrWord = 0;
     lastWordright = false;
     typingArea.value = "";
-    isOvertyping = false;
     thisWordWritten = [];
+    typedWords = [];
     typingArea.disabled = false;
     currentWordNoErrors = true;
     saveStats();
-    renderText();
+    renderNewText();
     errorsStack.splice(0, errorsStack.length);
     checkedWordsArr = new Array(targetTextWords.length).fill(false);
     currentStateChangingChar = targetTextArea.querySelectorAll('span')[currChar];
@@ -162,16 +207,20 @@ function checkIfFinished(){
     {
         finished = true;
         let wpmVal = Number(wpmCard.textContent);
+        let cpmVal = Number(cpmCard.textContent);
+        let errorsVal = Number(errorsCard.textContent);
         let bestWpmVal = statsObj.BestWpmCard;
         let testsCompleted = statsObj.testCompletedCard;
         if(wpmVal > bestWpmVal)
         {
             BestWpmCard.textContent = wpmVal;
         }
-        accuracyCard.textContent = Math.floor((1.0 * wpmCard.textContent / (wpmCard.textContent + errorsCard.textContent)) * 100);
+        let acc = Math.floor((1.0 * cpmVal / (cpmVal + errorsVal)) * 100);
+        accuracyCard.textContent = (acc?acc: 0) + "%";
         testsCompleted++;
         typingArea.disabled = true;
         testCompletedCard.textContent = testsCompleted;
+        currentStateChangingChar?.classList.remove('current')
         clearInterval(timeout);
         typingArea.removeEventListener('keydown', typingAction);
         saveStats();
@@ -191,7 +240,9 @@ if(e.key != "Backspace")
     if(currCharInCurrWord ==  targetTextWords[currWord].length && e.key == ' ' && currentWordNoErrors)
     {
         let wpmVal = Number(wpmCard.textContent);
-        wpmVal += 1 * statsFactor;
+
+        wpmTemp += 1 * statsFactor;
+        wpmVal = wpmTemp;
         wpmCard.textContent = Math.floor(wpmVal);
         lastWordright = true;
         currCharInCurrWord = 0;
@@ -230,8 +281,6 @@ if(e.key != "Backspace")
         errorsStack.push({currWord:currWord,
                             currChar:thisWordWritten.length});
         errorsCard.textContent = errorsVal;
-        isOvertyping = true;
-        overtypedChars++;
         currentWordNoErrors = false;
         thisWordWritten.push(e.key);
         const newSpan = document.createElement('span');
@@ -245,7 +294,7 @@ if(e.key != "Backspace")
         currentStateChangingChar = targetTextArea.querySelectorAll('span')[currChar];
         return;
     }
-    else if(currCharInCurrWord < targetTextWords[currWord].length && e.key == ' ')
+    else if(currCharInCurrWord < targetTextWords[currWord].length && currCharInCurrWord > 0 && e.key == ' ')
     {
         currentWordNoErrors = true;
         checkedWordsArr[currWord] = false;
@@ -262,11 +311,16 @@ if(e.key != "Backspace")
         checkIfFinished();
         return;
     }
-    
+    else if(currCharInCurrWord < targetTextWords[currWord].length && currCharInCurrWord == 0 && e.key == ' ')
+    {
+        e.preventDefault();
+        return;
+    }
     if(targetTextWords[currWord][currCharInCurrWord] == e.key)
     {
         let cpmVal = Number(cpmCard.textContent);
-        cpmVal+= 1 * statsFactor;
+        cpmTemp += 1 * statsFactor;
+        cpmVal = cpmTemp;
         cpmCard.textContent = Math.floor(cpmVal);
         currentStateChangingChar?.classList.remove('current');
         currentStateChangingChar?.classList.remove('wrong');
@@ -304,8 +358,11 @@ else
     if(returnOnSpaceFlag)
         {
         thisWordWritten = typedWords.pop().split('');
-        currCharInCurrWord = thisWordWritten.length;
         currWord--;
+        if(thisWordWritten.length > targetTextWords[currWord].length)
+        currCharInCurrWord = targetTextWords[currWord].length;
+        else
+        currCharInCurrWord = thisWordWritten.length;
         let errorFlag = errorsStack.length > 0;
 
         let diff = (targetTextWords[currWord].length - thisWordWritten.length);
@@ -417,9 +474,9 @@ else
     currentStateChangingChar?.classList.remove('wrong')
     currentStateChangingChar?.classList.remove('correct')
     currentStateChangingChar.remove();
-    if(currCharInCurrWord > 0)
-    currCharInCurrWord--;
-    if(currChar > 0)
+    // if(currCharInCurrWord > 0)
+    // currCharInCurrWord--;
+     if(currChar > 0)
         currChar--;
 
     currentStateChangingChar = targetTextArea.querySelectorAll('span')[currChar];
@@ -449,6 +506,8 @@ function startTimer(){
             if(!finished)
             {
             let wpmVal = Number(wpmCard.textContent);
+            let cpmVal = Number(cpmCard.textContent);
+            let errorsVal = Number(errorsCard.textContent);
             let bestWpmVal = statsObj.BestWpmCard;
             let testsCompleted = statsObj.testCompletedCard;
             if(wpmVal > bestWpmVal)
@@ -456,9 +515,11 @@ function startTimer(){
                 BestWpmCard.textContent = wpmVal;
             }
             testsCompleted++;
-            accuracyCard.textContent = Math.floor((1.0 * wpmCard.textContent / (wpmCard.textContent + errorsCard.textContent)) * 100);
+            let acc = Math.floor((1.0 * cpmVal / (cpmVal + errorsVal)) * 100);
+            accuracyCard.textContent = (acc?acc: 0) + "%";
             testCompletedCard.textContent = testsCompleted;
             typingArea.disabled = true;
+            currentStateChangingChar?.classList.remove('current')
             typingArea.removeEventListener('keydown', typingAction); 
             // renderText();
             saveStats();
@@ -520,7 +581,9 @@ else if(statsObj.activeTime == 120)
         btn120.classList.add('active');
         activeBtn = btn120;
         statsFactor = .5;
-}}
+}
+        wordsNumber = activeBtn.dataset.time == 30 ? 80 : activeBtn.dataset.time == 60 ? 160 : 280;
+}
 
 window.addEventListener('DOMContentLoaded', () => {
   const entries = performance.getEntriesByType('navigation');
