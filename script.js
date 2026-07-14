@@ -34,6 +34,7 @@ let checkedWordsArr = new Array(targetTextWords.length).fill(false);
 let currChar = 0;
 let currWord = 0;
 let cpmTemp = 0;
+let errorsTemp = 0;
 let wpmTemp = 0;
 let lastWordright = false;
 let thisWordWritten = [];
@@ -54,12 +55,12 @@ const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
 const modifierKeys = ['Control', 'Shift', 'Alt', 'Enter', 'CapsLock', 'Tab', 'Escape'];
 
 targetTextArea.innerHTML = targetText.split(' ').map((word,idx) => {
-    if (Math.random() < 0.4) {
+    if (Math.random() < 0.1) {
         let rnd = Math.floor(Math.random() * punctuation.length);
         targetTextWords[idx] = word + punctuation[rnd];
         return word + punctuation[rnd];
     }
-    else if (Math.random() < 0.4) {
+    else if (Math.random() < 0.1) {
         let rnd = Math.floor(Math.random() * punctuation.length);
         targetTextWords[idx] = punctuation[rnd] + word ;
         return punctuation[rnd] + word;
@@ -85,12 +86,12 @@ function renderNewText()
     targetText = generate({exactly: wordsNumber, join: ' '}).trim();
     targetTextWords = targetText.trim().split(' ');
     targetTextArea.innerHTML = targetText.split(' ').map((word,idx) => {
-    if (Math.random() < 0.4) {
+    if (Math.random() < 0.1) {
         let rnd = Math.floor(Math.random() * punctuation.length);
         targetTextWords[idx] = word + punctuation[rnd];
         return word + punctuation[rnd];
     }
-    else if (Math.random() < 0.4) {
+    else if (Math.random() < 0.1) {
         let rnd = Math.floor(Math.random() * punctuation.length);
         targetTextWords[idx] = punctuation[rnd] + word ;
         return punctuation[rnd] + word;
@@ -102,12 +103,12 @@ function renderNewText()
 function renderText()
 {
     targetTextArea.innerHTML = targetText.split(' ').map((word,idx) => {
-    if (Math.random() < 0.4) {
+    if (Math.random() < 0.1) {
         let rnd = Math.floor(Math.random() * punctuation.length);
         targetTextWords[idx] = word + punctuation[rnd];
         return word + punctuation[rnd];
     }
-    else if (Math.random() < 0.4) {
+    else if (Math.random() < 0.1) {
         let rnd = Math.floor(Math.random() * punctuation.length);
         targetTextWords[idx] = punctuation[rnd] + word ;
         return punctuation[rnd] + word;
@@ -183,6 +184,7 @@ function restartTypingTest()
      accuracyCard.textContent = "100%";
     cpmTemp = 0;
     wpmTemp = 0;
+    errorsTemp = 0;
     currChar = 0;
     currWord = 0;
     finished = false;
@@ -278,10 +280,12 @@ if(e.key != "Backspace")
     else if(currCharInCurrWord ==  targetTextWords[currWord].length && e.key != ' ')
     {
         let errorsVal = Number(errorsCard.textContent);
-        errorsVal++;
+        errorsTemp -= 1 * statsFactor;
+        errorVal = errorsTemp;
+        errorsCard.textContent = Math.floor(wpmVal);
         errorsStack.push({currWord:currWord,
                             currChar:thisWordWritten.length});
-        errorsCard.textContent = errorsVal;
+        // errorsCard.textContent = errorsVal;
         currentWordNoErrors = false;
         thisWordWritten.push(e.key);
         const newSpan = document.createElement('span');
@@ -335,13 +339,15 @@ if(e.key != "Backspace")
     else{
         currentWordNoErrors = false;
         let errorsVal = Number(errorsCard.textContent);
-        errorsVal++;
+        errorsTemp -= 1 * statsFactor;
+        errorVal = errorsTemp;
+        errorsCard.textContent = Math.floor(wpmVal);
         errorsStack.push({currWord:currWord,
                             currChar:currCharInCurrWord});
         currentStateChangingChar?.classList.add('wrong');
          currentStateChangingChar?.classList.remove('correct');
         currentStateChangingChar?.classList.remove('current')
-        errorsCard.textContent = errorsVal;
+        // errorsCard.textContent = errorsVal;
         currentStateChangingChar.dataset.typed = e.key;
         // thisWordWritten.push(e.key);
         currChar++;
@@ -482,6 +488,11 @@ else
 
     currentStateChangingChar = targetTextArea.querySelectorAll('span')[currChar];
     currentStateChangingChar?.classList.add('current');
+    let errorsVal = Number(errorsCard.textContent);
+    errorsTemp -= 1 * statsFactor;
+    errorVal = errorsTemp;
+    errorsCard.textContent = Math.floor(wpmVal);
+ 
     return;
     }
     thisWordWritten.pop();
@@ -494,6 +505,10 @@ else
     currentStateChangingChar?.classList.add('current')
     currentStateChangingChar?.classList.remove('wrong')
     currentStateChangingChar?.classList.remove('correct')
+    let errorsVal = Number(errorsCard.textContent);
+    errorsTemp -= 1 * statsFactor;
+    errorVal = errorsTemp;
+    errorsCard.textContent = Math.floor(wpmVal);
 }
 }
 
