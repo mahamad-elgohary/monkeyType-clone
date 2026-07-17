@@ -232,6 +232,31 @@ h1{
     position:relative;
 }
 
+.typing-options{
+    display:flex;
+    gap:.75rem;
+
+}
+
+.options-btn{
+    border:none;
+    background:none;
+    color:var(--sub);
+
+    font-size:1rem;
+    cursor:pointer;
+
+    transition:.2s;
+}
+
+.options-btn:hover{
+    color:var(--text);
+}
+
+.options-btn.active{
+    color:var(--yellow);
+}
+
 .current::after{
     content:"";
     position:absolute;
