@@ -4,6 +4,8 @@ A Monkeytype-inspired typing speed test built with vanilla JavaScript, HTML, and
 
 This project was created primarily to practice JavaScript logic, event handling, state management, DOM manipulation, and implementing a real-time typing engine from scratch without external frameworks.
 
+you can try it here : https://monkey-type-clone-3xj95pvjn-mohamadelgoharydev.vercel.app/
+ 
 ---
 
 ## Features
