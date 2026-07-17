@@ -4,23 +4,82 @@ A Monkeytype-inspired typing speed test built with vanilla JavaScript, HTML, and
 
 This project was created primarily to practice JavaScript logic, event handling, state management, DOM manipulation, and implementing a real-time typing engine from scratch without external frameworks.
 
-you can try it here : https://monkey-type-clone-3xj95pvjn-mohamadelgoharydev.vercel.app/
- 
----
-
-## Features
-
-### Typing Test Modes
-
-* 30 second mode
-* 60 second mode
-* 120 second mode
-
-The selected mode is persisted in Local Storage and automatically restored after refreshing the page.
+**site link:**
+https://typo-speed-qmfiviso7-mohamadelgoharydev.vercel.app?_vercel_share=KmBtjGCum2Ta8Fq8shMYQNl3BVFRUB5Z
 
 ---
 
-## Dynamic Text Generation
+# Features
+
+## Typing Test Modes
+
+The application supports multiple test durations:
+
+* 30 Second Mode
+* 60 Second Mode
+* 120 Second Mode
+
+The selected duration is persisted in Local Storage and automatically restored after page refresh.
+
+---
+
+## Typing Options
+
+Inspired by Monkeytype, the project supports additional typing challenges.
+
+### Symbols Mode
+
+Random punctuation characters are injected into generated words.
+
+Examples:
+
+```text
+hello!
+world?
+(test
+value]
+```
+
+Supported symbols:
+
+```text
+. , ! ? ; : & ( ) [ ] { } + = |
+```
+
+---
+
+### Numbers Mode
+
+Random digits are injected into generated words.
+
+Examples:
+
+```text
+hello7
+3world
+test9
+```
+
+---
+
+### Symbols + Numbers Mode
+
+Both systems can be enabled simultaneously.
+
+Examples:
+
+```text
+hello!
+world8
+(test
+5typing
+```
+
+Typing options are persisted and automatically restored on page reload.
+
+---
+
+# Dynamic Text Generation
 
 Random text is generated using:
 
@@ -28,7 +87,39 @@ Random text is generated using:
 random-words
 ```
 
-The amount of generated words depends on the selected duration:
+Generated words are then optionally modified according to the active typing modes.
+
+### Standard Mode
+
+```text
+hello world typing speed test
+```
+
+### Symbols Mode
+
+```text
+hello!
+world?
+(test
+```
+
+### Numbers Mode
+
+```text
+hello7
+3world
+test9
+```
+
+### Symbols + Numbers Mode
+
+```text
+hello!
+world8
+(test
+```
+
+The amount of generated text depends on the selected duration:
 
 | Duration | Words Generated |
 | -------- | --------------- |
@@ -38,7 +129,7 @@ The amount of generated words depends on the selected duration:
 
 ---
 
-## Real-Time Character Tracking
+# Real-Time Character Rendering
 
 Every character is rendered as an individual span element.
 
@@ -52,20 +143,20 @@ Example:
 <span data-typed="">o</span>
 ```
 
-This allows:
+This enables:
 
-* Character-by-character styling
-* Correct character highlighting
-* Wrong character highlighting
-* Cursor movement
+* Character-level validation
+* Character highlighting
+* Custom cursor positioning
 * Error recovery
-* Overtyping visualization
+* Overtyping support
+* Dynamic character insertion
 
 ---
 
-## Typing Engine
+# Typing Engine
 
-The typing engine tracks:
+The typing engine tracks the current typing state through several variables.
 
 ### Current Character
 
@@ -73,7 +164,7 @@ The typing engine tracks:
 currChar
 ```
 
-Represents the current character position in the entire text.
+Represents the current position inside the rendered text.
 
 ---
 
@@ -83,7 +174,7 @@ Represents the current character position in the entire text.
 currWord
 ```
 
-Represents the current active word.
+Represents the active word being typed.
 
 ---
 
@@ -93,31 +184,27 @@ Represents the current active word.
 currCharInCurrWord
 ```
 
-Tracks the current character position inside the active word.
+Tracks the character index inside the active word.
 
 ---
 
-## Character States
+# Character States
 
-Each character can exist in one of several states:
+Each character can exist in several visual states.
 
 ### Untyped
 
 Default state.
 
-```css
-opacity: 0.5;
-```
-
 ---
 
 ### Current Character
 
-Represents the typing cursor position.
-
 ```css
 .current
 ```
+
+Represents the custom cursor location.
 
 ---
 
@@ -141,25 +228,23 @@ Applied when the typed character does not match the target character.
 
 ---
 
-## Word Validation
+# Word Validation
 
 A word is considered correct only when:
 
-* Every typed character matches
-* No errors occurred inside the word
+* Every character matches
+* No unresolved mistakes exist
 * Space is pressed after completing the word
 
-Then:
+The engine maintains correctness state through:
 
 ```javascript
-WPM++
+currentWordNoErrors
 ```
 
 ---
 
-## Incomplete Word Detection
-
-If space is pressed before completing the current word:
+# Incomplete Word Detection
 
 Example:
 
@@ -175,19 +260,19 @@ Typed:
 prog
 ```
 
-Then pressing space:
+Pressing space:
 
-* Marks the word incorrect
-* Moves to the next word
-* Prevents WPM increment
+* Marks the word as incorrect
+* Advances to the next word
+* Prevents the word from being considered fully correct
 
-Similar to Monkeytype behavior.
+This behavior closely mirrors Monkeytype.
 
 ---
 
-## Error Tracking System
+# Error Tracking System
 
-All mistakes are stored in:
+All typing mistakes are stored inside:
 
 ```javascript
 errorsStack
@@ -197,20 +282,21 @@ Structure:
 
 ```javascript
 {
-    currWord,
-    currChar
+  currWord,
+  currChar
 }
 ```
 
-This enables:
+This allows:
 
-* Tracking incorrect characters
-* Detecting recovered mistakes
-* Recalculating word correctness
+* Error recovery detection
+* Word correctness recalculation
+* Backspace restoration logic
+* Tracking unresolved mistakes
 
 ---
 
-## Overtyping Support
+# Overtyping Support
 
 Example:
 
@@ -226,7 +312,7 @@ Typed:
 helloooo
 ```
 
-Extra characters are rendered dynamically.
+Extra characters are dynamically inserted into the text stream.
 
 Example:
 
@@ -234,29 +320,28 @@ Example:
 <span class="wrong">o</span>
 ```
 
-Inserted directly into the text stream.
+This allows realistic overtyping behavior similar to Monkeytype.
 
 ---
 
-## Overtyping Recovery
+# Overtyping Recovery
 
 Backspace can:
 
-* Remove dynamically inserted overtyped spans
+* Remove dynamically inserted characters
 * Restore cursor position
 * Restore word state
-
-Behavior mirrors Monkeytype.
+* Recalculate word correctness
 
 ---
 
-## Backspace Engine
+# Backspace Engine
 
-The project implements a custom backspace engine.
+The application implements a custom backspace system.
 
 Supports:
 
-### Correct Character Deletion
+### Correct Character Removal
 
 Removes:
 
@@ -268,7 +353,7 @@ state.
 
 ---
 
-### Wrong Character Deletion
+### Wrong Character Removal
 
 Removes:
 
@@ -282,13 +367,13 @@ state.
 
 ### Error Recovery
 
-When the final incorrect character in a word is removed:
+When the final mistake in a word is removed:
 
 ```javascript
 currentWordNoErrors = true
 ```
 
-The word becomes eligible for WPM counting again.
+The word becomes eligible to be considered correct again.
 
 ---
 
@@ -296,63 +381,69 @@ The word becomes eligible for WPM counting again.
 
 Allowed only when:
 
-* Previous word was incorrect
+* The previous word was not finalized as correct
 
 Blocked when:
 
-* Previous word was completed correctly
+* The previous word was completed correctly
 
-Matching Monkeytype's default behavior.
+This behavior closely follows Monkeytype.
 
 ---
 
-## Cursor System
+# Custom Cursor System
 
-A custom cursor system is implemented using:
+The application uses a manually controlled cursor.
+
+Instead of relying on the browser caret:
 
 ```css
 .current
 ```
 
-instead of relying on the browser textarea caret.
+is moved between character spans.
 
-The cursor is moved manually through the character spans.
-
----
-
-## Statistics
-
-### WPM
-
-Words completed correctly.
+This provides full control over cursor rendering and behavior.
 
 ---
 
-### CPM
+# Statistics
+
+## WPM
+
+Calculated dynamically using the standard formula:
+
+```javascript
+(cpm / 5) / elapsedMinutes
+```
+
+---
+
+## CPM
 
 Correct characters typed.
 
 ---
 
-### Errors
+## Errors
 
 Total incorrect keystrokes.
 
 ---
 
-### Accuracy
+## Accuracy
 
 Calculated using:
 
 ```javascript
-correctChars / (correctChars + errors)
+(netWpm / wpm) * 100
 ```
 
 Displayed as a percentage.
 
 ---
 
-## Best WPM
+# Best WPM
 
 Highest achieved WPM.
 
@@ -364,7 +455,7 @@ localStorage
 
 ---
 
-## Tests Completed
+# Tests Completed
 
 Tracks total completed typing sessions.
 
@@ -376,136 +467,189 @@ localStorage
 
 ---
 
-## Local Storage Persistence
+# Local Storage Persistence
 
-Saved automatically:
+The application automatically persists:
 
 ```javascript
 {
-    BestWpmCard,
-    testCompletedCard,
-    activeTime
+  BestWpmCard,
+  testCompletedCard,
+  activeTime,
+  symbolsActive,
+  numbersActive
 }
 ```
 
-Persists between browser sessions.
+Persisted data includes:
+
+* Best WPM
+* Total completed tests
+* Selected duration
+* Symbols mode state
+* Numbers mode state
+
+All settings are restored automatically on reload.
 
 ---
 
-## Restart Functionality
+# Restart Functionality
 
 Resets:
 
 * Timer
 * Cursor
-* Errors
 * WPM
 * CPM
 * Accuracy
+* Errors
 * Current word state
 * Current character state
+* Error tracking
 
-Without reloading the page.
+Without refreshing the page.
 
 ---
 
-## New Text Functionality
+# New Text Functionality
 
-Generates a completely new random text while preserving:
+Generates a completely new text while preserving:
 
 * User settings
-* Saved statistics
+* Statistics
+* Active typing options
 
 ---
 
-## Architecture Overview
+# Input Filtering
 
-Main state variables:
+Only supported typing characters are processed.
+
+Implemented using:
+
+```javascript
+englishRegex
+```
+
+This prevents unsupported keyboard input from interfering with the typing engine.
+
+---
+
+# Architecture Overview
+
+Core state variables:
 
 ```javascript
 currChar
 currWord
 currCharInCurrWord
+
 currentWordNoErrors
+
 errorsStack
 checkedWordsArr
+
 typedWords
 thisWordWritten
+
+symbolsActive
+numbersActive
+
+timeVal
+finished
+starting
 ```
 
-The application behaves similarly to a finite state machine where every keystroke transitions the typing session into a new state.
+The application behaves similarly to a finite state machine where every keystroke transitions the system into a new state.
+
+The typing engine maintains synchronization between:
+
+* Rendered text
+* Cursor position
+* Word validation
+* Error tracking
+* Statistics
+* Overtyping state
 
 ---
 
-## Technologies Used
+# Technologies Used
 
-### HTML5
+## HTML5
 
-Structure and layout.
+Application structure.
 
-### CSS3
+---
 
-Monkeytype-inspired dark theme.
+## CSS3
 
-### JavaScript (ES6 Modules)
+Monkeytype-inspired UI and styling.
 
-Core typing engine.
+---
 
-### Local Storage API
+## JavaScript (ES6 Modules)
 
-Statistics persistence.
+Core typing engine and state management.
 
-### random-words
+---
+
+## Local Storage API
+
+Persistence layer for settings and statistics.
+
+---
+
+## random-words
 
 Random text generation.
 
 ---
 
-## What This Project Demonstrates
+# What This Project Demonstrates
 
 This project demonstrates understanding of:
 
 * DOM manipulation
 * Event-driven programming
 * State management
+* Real-time input processing
 * Finite-state-machine thinking
-* Input handling
 * Dynamic rendering
 * Local Storage persistence
 * Custom cursor implementation
 * Error recovery systems
-* Real-time UI updates
+* Advanced keyboard event handling
+* Overtyping logic
+* Dynamic content generation
+* Persistent user preferences
+* Complex backspace navigation
 * Software architecture without frameworks
 
 ---
 
-## Future Improvements
+# Future Improvements
 
 Potential upgrades:
 
-* Live progress bar
-* Character-by-character animations
-* Word wrapping virtualization
-* Performance optimizations
+* Configurable symbol frequency
+* Configurable number frequency
+* Custom word lists
+* Quote mode
+* Zen mode
 * Theme switching
-* Leaderboard system
-* User profiles
-* Heatmap statistics
-* Typing history
+* Typing heatmaps
 * Detailed analytics
 * Ghost replay mode
 * Multiplayer races
-* Custom text mode
-* Punctuation mode
-* Quote mode
-* Zen mode
-* Responsive mobile layout
+* Progress visualization
+* Performance optimization for large texts
+* Mobile-first responsiveness
 * Unit testing
-* State-machine refactor
 * TypeScript migration
+* State-machine refactor
 
 ---
 
-## Project Goal
+# Project Goal
 
-The primary goal of this project was not merely to clone Monkeytype's appearance, but to build the complete typing engine manually and gain experience designing complex interactive state-driven systems using only vanilla JavaScript.
+The primary goal of this project was not merely to clone Monkeytype's appearance, but to build the complete typing engine manually and gain practical experience designing complex interactive state-driven systems using only vanilla JavaScript.
